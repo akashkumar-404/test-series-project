@@ -10,7 +10,7 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/test-series-project" element={<Login />} />
           <Route
             path="/home"
             element={
