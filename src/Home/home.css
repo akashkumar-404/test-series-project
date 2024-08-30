@@ -1,0 +1,34 @@
+/* Home.css */
+.homePageBox{
+    padding: 55px 55px 55px 55px;
+}
+.logout-button-container {
+   display: flex;
+  justify-content: end;
+  }
+  .logout-button{
+    width: 150px;
+  }
+.input-container {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-field {
+    margin-right: 10px;
+    flex: 1;
+  }
+  
+  .delete-button {
+    font-size: 20px; /* Adjust the size of the delete icon */
+    width: 50px;
+  }
+  
+  .add-button {
+    width: 150px;
+    font-size: 12px; /* Adjust the font size of the add button */
+    padding: 4px 8px; /* Adjust the padding for the add button */
+    margin-top: 10px;
+  }
+  
