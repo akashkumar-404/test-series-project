@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/test-series-project" element={<Login />} />
           <Route
-            path="/home"
+            path="/test-series-project/home"
             element={
               <ProtectedRoute>
                 <Home />

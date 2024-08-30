@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
     // Mock login logic
     if (email === 'amitpatel@gmail.com' && password === 'password') {
       setIsAuthenticated(true);
-      navigate('/home');
+      navigate('/test-series-project/home');
     } else {
       return 'Invalid email or password';
     }
@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('isAuthenticated'); // Clear the value from localStorage
-    navigate('/');
+    navigate('/test-series-project');
   };
 
   return (
