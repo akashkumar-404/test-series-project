@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from '@mui/material';
-import './home.css'; // Import the CSS file
-import { useAuth } from '../LoginPage/AuthContext';
-import { generateUniqueId } from '../utils/idGeneration';
+import React, { useEffect, useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Button } from "@mui/material";
+import "./home.css"; // Import the CSS file
+import { useAuth } from "../LoginPage/AuthContext";
+import { generateUniqueId } from "../utils/idGeneration";
 
 function Home() {
   const [inputPairs, setInputPairs] = useState([
-    { id: 1, option1: '', option2: '' }, // Initial input pair for question and translated question
+    { id: 1, option1: "", option2: "" }, // Initial input pair for question and translated question
   ]);
-  const [id,setId]=useState('')
-  const [tag, setTag] = useState('');
-  const [solution, setSolution] = useState(''); // State for Solution input
-  const [description, setDescription] = useState(''); // State for Description input
+  const [id, setId] = useState("");
+  const [tag, setTag] = useState("");
+  const [solution, setSolution] = useState(""); // State for Solution input
+  const [description, setDescription] = useState(""); // State for Description input
   const { logout } = useAuth();
-  useEffect(()=>{
-const idGeneration=generateUniqueId()
-setId(idGeneration)
-  },[])
+  useEffect(() => {
+    const idGeneration = generateUniqueId();
+    setId(idGeneration);
+  }, []);
   // const id=generateUniqueId()
 
   const handleInputChange = (id, index, event) => {
@@ -33,7 +33,7 @@ setId(idGeneration)
   const handleAddInputPair = () => {
     setInputPairs([
       ...inputPairs,
-      { id: inputPairs.length + 1, option1: '', option2: '' },
+      { id: inputPairs.length + 1, option1: "", option2: "" },
     ]);
   };
 
@@ -56,11 +56,19 @@ setId(idGeneration)
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = {
-      id:id,
-      questions: inputPairs.map((inputPair) => ({
-        option1: inputPair.option1,
-        option2: inputPair.option2,
-      })),
+      questions: inputPairs.map((inputPair, index) => {
+        if (index === 0) {
+          return {ques:{
+            question: inputPair.option1,
+            translated: inputPair.option2,
+          }};
+        } else {
+          return {[`opt${index}`]:{
+            option: inputPair.option1,
+            translated: inputPair.option2,
+          }};
+        }
+      }),
       tag: tag,
       solution: solution, // Include solution in the form data
       description: description, // Include description in the form data
@@ -87,15 +95,21 @@ setId(idGeneration)
             <input
               type="text"
               value={inputPair.option1}
-              onChange={(event) => handleInputChange(inputPair.id, 'option1', event)}
-              placeholder={index === 0 ? 'Write question' : `Option ${index}`} // First input has 'Write question'
+              onChange={(event) =>
+                handleInputChange(inputPair.id, "option1", event)
+              }
+              placeholder={index === 0 ? "Write question" : `Option ${index}`} // First input has 'Write question'
               className="input-field"
             />
             <input
               type="text"
               value={inputPair.option2}
-              onChange={(event) => handleInputChange(inputPair.id, 'option2', event)}
-              placeholder={index === 0 ? 'Write translated question' : `Option ${index}`} // Second input has 'Write translated question'
+              onChange={(event) =>
+                handleInputChange(inputPair.id, "option2", event)
+              }
+              placeholder={
+                index === 0 ? "Write translated question" : `Option ${index}`
+              } // Second input has 'Write translated question'
               className="input-field"
             />
             {index > 0 && ( // Conditionally render delete button only for additional input pairs
@@ -142,7 +156,7 @@ setId(idGeneration)
           className="add-button"
           variant="contained"
           type="submit"
-          style={{ marginTop: '10px' }}
+          style={{ marginTop: "10px" }}
         >
           Submit
         </Button>
