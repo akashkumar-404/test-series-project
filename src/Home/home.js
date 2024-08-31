@@ -1,38 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from '@mui/material';
-import './home.css'; 
-import { v4 as uuidv4 } from 'uuid';
+import './home.css'; // Import the CSS file
 import { useAuth } from '../LoginPage/AuthContext';
+import { generateUniqueId } from '../utils/idGeneration';
 
 function Home() {
-  const [inputs, setInputs] = useState([{ id: 1, value: '' },{ id: 2, value: '' }]);
-  const [tag,setTag] = useState('');
-  const [solution, setSolution] = useState(''); 
-  const [description, setDescription] = useState(''); 
+  const [inputPairs, setInputPairs] = useState([
+    { id: 1, option1: '', option2: '' }, // Initial input pair for question and translated question
+  ]);
+  const [id,setId]=useState('')
+  const [tag, setTag] = useState('');
+  const [solution, setSolution] = useState(''); // State for Solution input
+  const [description, setDescription] = useState(''); // State for Description input
   const { logout } = useAuth();
+  useEffect(()=>{
+const idGeneration=generateUniqueId()
+setId(idGeneration)
+  },[])
+  // const id=generateUniqueId()
 
-
-  const handleInputChange = (id, event) => {
-    const newInputs = inputs.map((input) =>
-      input.id === id ? { ...input, value: event.target.value } : input
+  const handleInputChange = (id, index, event) => {
+    const newInputPairs = inputPairs.map((inputPair) =>
+      inputPair.id === id
+        ? { ...inputPair, [index]: event.target.value }
+        : inputPair
     );
-    setInputs(newInputs);
+    setInputPairs(newInputPairs);
   };
 
-  const handleAddInput = () => {
-    setInputs([...inputs, { id: inputs.length + 1, value: '' }]);
+  const handleAddInputPair = () => {
+    setInputPairs([
+      ...inputPairs,
+      { id: inputPairs.length + 1, option1: '', option2: '' },
+    ]);
   };
 
-
-  const handleRemoveInput = (id) => {
-    setInputs(inputs.filter((input) => input.id !== id));
+  const handleRemoveInputPair = (id) => {
+    setInputPairs(inputPairs.filter((inputPair) => inputPair.id !== id));
   };
 
   const handleTag = (e) => {
-    setTag(e.target.value)
-  }
+    setTag(e.target.value);
+  };
+
   const handleSolutionChange = (e) => {
     setSolution(e.target.value);
   };
@@ -44,45 +56,52 @@ function Home() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = {
-        id:uuidv4(),
-        questions: inputs.map(input => input.value),
-        tag: tag,
-        solution: solution, 
-        description: description 
-      };
-      console.log('Form Submitted', JSON.stringify(formData, null, 2));
+      id:id,
+      questions: inputPairs.map((inputPair) => ({
+        option1: inputPair.option1,
+        option2: inputPair.option2,
+      })),
+      tag: tag,
+      solution: solution, // Include solution in the form data
+      description: description, // Include description in the form data
+    };
+    console.log('Form Submitted', JSON.stringify(formData, null, 2));
   };
 
   return (
     <div className="homePageBox">
-        <div
-        className="logout-button-container"
-        >
+      <div className="logout-button-container">
         <Button
-        className="logout-button"
-        variant="contained"
-        color="secondary"
-        onClick={logout} // Call the logout function
-        
-      >
-        Logout
-      </Button>
+          className="logout-button"
+          variant="contained"
+          color="secondary"
+          onClick={logout} // Call the logout function
+        >
+          Logout
+        </Button>
       </div>
-      <h1>Add Questions</h1>
+      <h1>Add Questions and it's id:-{id}</h1>
       <form onSubmit={handleSubmit}>
-        {inputs.map((input, index) => (
-          <div key={input.id} className="input-container">
+        {inputPairs.map((inputPair, index) => (
+          <div key={inputPair.id} className="input-container">
             <input
               type="text"
-              value={input.value}
-              onChange={(event) => handleInputChange(input.id, event)}
-              placeholder={index === 0 ? 'Write question' : index === 1 ? 'Write translated question' : 'Option'}
+              value={inputPair.option1}
+              onChange={(event) => handleInputChange(inputPair.id, 'option1', event)}
+              placeholder={index === 0 ? 'Write question' : `Option ${index}`} // First input has 'Write question'
               className="input-field"
             />
-            {index !== 0 && index !== 1 && ( // Conditionally render delete button for all inputs except the first one
+            <input
+              type="text"
+              value={inputPair.option2}
+              onChange={(event) => handleInputChange(inputPair.id, 'option2', event)}
+              placeholder={index === 0 ? 'Write translated question' : `Option ${index}`} // Second input has 'Write translated question'
+              className="input-field"
+            />
+            {index > 0 && ( // Conditionally render delete button only for additional input pairs
               <IconButton
                 aria-label="delete"
-                onClick={() => handleRemoveInput(input.id)}
+                onClick={() => handleRemoveInputPair(inputPair.id)}
                 className="delete-button"
               >
                 <DeleteIcon />
@@ -92,29 +111,20 @@ function Home() {
         ))}
         <Button
           variant="contained"
-          onClick={handleAddInput}
+          onClick={handleAddInputPair}
           className="add-button"
         >
-          Add Options
+          Add Input
         </Button>
-       <div className='padding-bottom-top'>
+        <br />
+        <br />
         <input
-        type='text'
-        onChange={handleTag}
-        placeholder='Enter Tag'
-        className="input-field"
-        />
-        </div>
-        <div className='padding-bottom-top'>
-         <input
           type="text"
           value={solution}
           onChange={handleSolutionChange}
           placeholder="Solution"
           className="input-field"
         />
-        </div>
-        <div className='padding-bottom-top'>
         <input
           type="text"
           value={description}
@@ -122,7 +132,12 @@ function Home() {
           placeholder="Description"
           className="input-field"
         />
-        </div>
+        <input
+          type="text"
+          onChange={handleTag}
+          placeholder="Enter Tag"
+          className="input-field"
+        />
         <Button
           className="add-button"
           variant="contained"
